@@ -1,0 +1,17 @@
+/* src/index.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* This sets a consistent background for the entire app */
+body {
+  background-color: #0f172a; /* This is the hex code for Tailwind's slate-900 */
+}
