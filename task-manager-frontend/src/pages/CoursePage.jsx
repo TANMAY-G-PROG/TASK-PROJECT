@@ -1,30 +1,32 @@
-// src/pages/CoursePage.jsx
+// src/pages/CoursePage.jsx - CORRECTED
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import apiClient from '../services/api';
 import DeadlinesTab from '../components/DeadlinesTab';
+import TasksTab from '../components/TasksTab';
 
 const CoursePage = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('deadlines');
-  const { id } = useParams(); // Gets the course ID from the URL
+  const { id } = useParams();
+
+  const fetchCourse = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.get(`/courses/${id}`);
+      setCourse(response.data);
+    } catch (err) {
+      setError('Failed to load course data. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        setLoading(true);
-        const response = await apiClient.get(`/courses/${id}`);
-        setCourse(response.data);
-      } catch (err) {
-        setError('Failed to load course data. Please try again.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCourse();
   }, [id]);
 
@@ -64,7 +66,8 @@ const CoursePage = () => {
       {/* Tab Content */}
       <div>
         {activeTab === 'deadlines' && <DeadlinesTab items={course.gradableItems} />}
-        {activeTab === 'tasks' && <div>Tasks content goes here...</div>}
+        {activeTab === 'tasks' && <TasksTab initialTasks={course.tasks} courseId={course.id} onUpdate={fetchCourse} />}
+        {/* THIS LINE IS NOW CORRECTED */}
         {activeTab === 'resources' && <div>Resources content goes here...</div>}
       </div>
     </div>
