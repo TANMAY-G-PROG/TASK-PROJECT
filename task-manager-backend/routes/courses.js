@@ -8,6 +8,7 @@ const {
   updateCourse,
   deleteCourse,
 } = require('../controllers/courseController');
+const { createTaskForCourse } = require('../controllers/taskController');
 const { authenticateToken } = require('../middleware/auth');
 
 // Apply authentication middleware to all course routes
@@ -17,7 +18,9 @@ router.route('/').get(getAllCourses).post(createCourse);
 
 router.route('/:id').get(getCourseById).put(updateCourse).delete(deleteCourse);
 
-module.exports = router;
+router.route('/:courseId/tasks').post(createTaskForCourse);
 
 const gradableItemRouter = require('./gradableItems');
 router.use('/:courseId/gradable-items', gradableItemRouter);
+
+module.exports = router;

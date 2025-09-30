@@ -2,72 +2,56 @@
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+exports.createTaskForCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const { title } = req.body;
 
-exports.getAllTasks = async (req, res) => {
   try {
-    const tasks = await prisma.task.findMany({
-      where: { authorId: req.user.userId },
-      orderBy: { createdAt: 'desc' },
+    const course = await prisma.course.findFirst({
+      where: { id: parseInt(courseId), userId: req.user.userId },
     });
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve tasks.' });
-  }
-};
 
-exports.createTask = async (req, res) => {
-  const { title, description } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: 'Title is required.' });
-  }
-  try {
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found or user not authorized.' });
+    }
+
     const task = await prisma.task.create({
       data: {
         title,
-        description,
-        authorId: req.user.userId,
+        courseId: parseInt(courseId),
       },
     });
     res.status(201).json(task);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create task.' });
+    res.status(400).json({ error: 'Failed to create task.' });
   }
 };
 
+
 exports.updateTask = async (req, res) => {
-  const { id } = req.params;
-  const { title, description, completed } = req.body;
-  try {
-    const task = await prisma.task.updateMany({
-      where: {
-        id: parseInt(id),
-        authorId: req.user.userId, // Ensures users can only update their own tasks
-      },
-      data: { title, description, completed },
-    });
-    if (task.count === 0) {
-      return res.status(404).json({ error: 'Task not found or user not authorized.' });
+    const { taskId } = req.params;
+    const { title, completed } = req.body;
+    
+    try {
+        const updatedTask = await prisma.task.update({
+            where: { id: parseInt(taskId) },
+            data: { title, completed }
+        });
+        res.json(updatedTask);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to update task.' });
     }
-    res.json({ message: 'Task updated successfully.' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update task.' });
-  }
 };
 
 exports.deleteTask = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const task = await prisma.task.deleteMany({
-      where: {
-        id: parseInt(id),
-        authorId: req.user.userId, // Ensures users can only delete their own tasks
-      },
-    });
-    if (task.count === 0) {
-      return res.status(404).json({ error: 'Task not found or user not authorized.' });
+    const { taskId } = req.params;
+
+    try {
+        await prisma.task.delete({
+            where: { id: parseInt(taskId) },
+        });
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to delete task.' });
     }
-    res.status(204).send(); // No content on successful deletion
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete task.' });
-  }
 };
