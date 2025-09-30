@@ -14,22 +14,88 @@ model User {
   email     String   @unique
   name      String
   password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  tasks     Task[] // A user can have many tasks
+  courses   Course[] // A user can have many courses
 }
 
+model Course {
+  id           Int             @id @default(autoincrement())
+  courseCode   String // e.g., "CS201"
+  title        String // e.g., "Data Structures"
+  instructor   String?
+  credits      Float?
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+  tasks        Task[]
+  gradableItems GradableItem[]
+  resources    Resource[]
+  schedules    Schedule[]
+}
+
+// Replaces the old "Task" model's direct link to User
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String?
-  completed   Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    Int
+  completed   Boolean  @default(false)
+  dueDate     DateTime?
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int
 }
 
-enum Role {
-  USER
-  ADMIN
+// For assignments, exams, quizzes, etc.
+model GradableItem {
+  id            Int      @id @default(autoincrement())
+  title         String
+  type          ItemType @default(ASSIGNMENT)
+  dueDate       DateTime
+  weightage     Float // e.g., 0.30 for 30%
+  gradeAchieved Float? // The score the student received
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId      Int
+}
+
+// For notes, links, and files
+model Resource {
+  id       Int          @id @default(autoincrement())
+  title    String
+  type     ResourceType @default(LINK)
+  content  String // URL for links, Markdown content for notes, file path for uploads
+  course   Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId Int
+}
+
+// For the weekly timetable
+model Schedule {
+  id        Int       @id @default(autoincrement())
+  dayOfWeek Day
+  startTime String // e.g., "14:00"
+  endTime   String // e.g., "15:30"
+  location  String?
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  Int
+}
+
+enum ItemType {
+  ASSIGNMENT
+  QUIZ
+  MIDTERM
+  FINAL_EXAM
+  LAB
+  PROJECT
+}
+
+enum ResourceType {
+  LINK
+  NOTE
+  FILE
+}
+
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }

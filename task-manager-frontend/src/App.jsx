@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import CoursePage from './pages/CoursePage';
 
 function App() {
   return (
@@ -20,6 +21,11 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/courses/:id" element={
+              <ProtectedRoute>
+                <CoursePage />
               </ProtectedRoute>
             } />
             <Route path="*" element={<Navigate to="/login" />} />
