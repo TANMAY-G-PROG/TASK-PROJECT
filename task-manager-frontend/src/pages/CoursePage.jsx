@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import apiClient from '../services/api';
 import DeadlinesTab from '../components/DeadlinesTab';
 import TasksTab from '../components/TasksTab';
+import ResourcesTab from '../components/ResourcesTab';
 
 const CoursePage = () => {
   const [course, setCourse] = useState(null);
@@ -65,10 +66,9 @@ const CoursePage = () => {
 
       {/* Tab Content */}
       <div>
-        {activeTab === 'deadlines' && <DeadlinesTab items={course.gradableItems} />}
+        {activeTab === 'deadlines' && <DeadlinesTab items={course.gradableItems} courseId={course.id} onUpdate={fetchCourse} />}
         {activeTab === 'tasks' && <TasksTab initialTasks={course.tasks} courseId={course.id} onUpdate={fetchCourse} />}
-        {/* THIS LINE IS NOW CORRECTED */}
-        {activeTab === 'resources' && <div>Resources content goes here...</div>}
+        {activeTab === 'resources' && <ResourcesTab initialResources={course.resources} courseId={course.id} onUpdate={fetchCourse} />}
       </div>
     </div>
   );

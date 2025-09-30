@@ -6,6 +6,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const courseRoutes = require('./routes/courses');
+const resourceRoutes = require('./routes/resources');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/resources', resourceRoutes);
 
 app.get('/', (req, res) => {
   res.send('Secure Task Manager API is running...');
