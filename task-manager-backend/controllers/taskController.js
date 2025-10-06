@@ -87,3 +87,21 @@ exports.createTaskForProject = async (req, res) => {
         res.status(400).json({ error: 'Failed to create task.' });
     }
 };
+
+// task-manager-backend/controllers/taskController.js
+
+// Add this new function to the file
+exports.getTaskById = async (req, res) => {
+    const { taskId } = req.params;
+    try {
+        const task = await prisma.task.findUnique({
+            where: { id: parseInt(taskId) },
+        });
+        if (!task) {
+            return res.status(404).json({ error: 'Task not found.' });
+        }
+        res.json(task);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve task.' });
+    }
+};

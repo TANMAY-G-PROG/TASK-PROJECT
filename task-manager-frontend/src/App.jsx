@@ -9,6 +9,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
 import ProjectPage from './pages/ProjectPage';
+import TaskDetailPage from './pages/TaskDetailPage';
 
 function App() {
   return (
@@ -33,6 +34,11 @@ function App() {
             <Route path="/projects/:id" element= {
               <ProtectedRoute>
                 <ProjectPage />
+              </ProtectedRoute>} 
+            />
+            <Route path="/projects/:projectId/tasks/:taskId" element= {
+              <ProtectedRoute>
+                <TaskDetailPage />
               </ProtectedRoute>} 
             />
             <Route path="*" element={<Navigate to="/login" />} />

@@ -16,6 +16,7 @@ model User {
   password  String
   courses   Course[] // A user can have many courses
   projects  ProjectMember[]
+  comments  Comment[]
 }
 
 model Project {
@@ -86,6 +87,20 @@ model Task {
   
   // NEW: Add a status for the Kanban board
   status      String   @default("TODO") // e.g., "TODO", "IN_PROGRESS", "DONE"
+
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    Int
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
 }
 
 // For assignments, exams, quizzes, etc.

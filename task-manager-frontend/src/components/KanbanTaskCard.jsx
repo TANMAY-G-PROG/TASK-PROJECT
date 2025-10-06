@@ -43,7 +43,7 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const KanbanTaskCard = ({ task, onDelete }) => {
+const KanbanTaskCard = ({ task, onDelete, onCardClick}) => {
   const { 
     attributes, 
     listeners, 
@@ -64,8 +64,13 @@ const KanbanTaskCard = ({ task, onDelete }) => {
     onDelete(task.id);
   }
 
+  const handleClick = () => {
+    onCardClick(task);
+  }
+
   return (
     <div
+      onClick={handleClick}
       ref={setNodeRef}
       style={style}
       {...attributes}

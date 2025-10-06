@@ -116,8 +116,10 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../services/api';
 import { DndContext, closestCorners, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import KanbanColumn from './KanbanColumn';
+import { useNavigate } from 'react-router-dom';
 
 const KanbanBoardTab = ({ initialTasks, projectId, onUpdate }) => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState(initialTasks);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [activeTask, setActiveTask] = useState(null);
@@ -202,13 +204,23 @@ const KanbanBoardTab = ({ initialTasks, projectId, onUpdate }) => {
   };
 
   const handleDeleteTask = async (taskId) => {
-    try {
-      await apiClient.delete(`/tasks/${taskId}`);
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      onUpdate();
-    } catch (error) {
-      console.error("Failed to delete task", error);
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        // await apiClient.delete(`/tasks/${taskId}`);
+        // setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+        // onUpdate();
+        await apiClient.delete(`/tasks/${taskId}`);
+        onUpdate();
+      } catch (error) {
+        // console.error("Failed to delete task", error);
+        console.error("Failed to delete task", error);
+        alert('Failed to delete task.');
+      }
     }
+  };
+
+  const handleCardClick = (task) => {
+      navigate(`/projects/${projectId}/tasks/${task.id}`);
   };
 
   const columns = {
@@ -227,7 +239,7 @@ const KanbanBoardTab = ({ initialTasks, projectId, onUpdate }) => {
             placeholder="Add a new task to the board..."
             className="flex-grow px-4 py-3 bg-brand-dark border border-gray-600 rounded-md text-white"
         />
-        <button type="submit" className="px-5 py-3 bg-brand-accent hover:bg-brand-accent-hover text-white font-semibold rounded-lg">
+        <button type="submit" className="px-5 py-3 bg-indigo-600 hover:bg-brand-accent-hover text-white font-semibold rounded-lg">
             Add Task
         </button>
       </form>
@@ -240,9 +252,9 @@ const KanbanBoardTab = ({ initialTasks, projectId, onUpdate }) => {
         onDragCancel={handleDragCancel}
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <KanbanColumn id="TODO" title="To Do" tasks={columns.TODO} onDelete={handleDeleteTask} />
-          <KanbanColumn id="IN_PROGRESS" title="In Progress" tasks={columns.IN_PROGRESS} onDelete={handleDeleteTask} />
-          <KanbanColumn id="DONE" title="Done" tasks={columns.DONE} onDelete={handleDeleteTask} />
+          <KanbanColumn id="TODO" title="To Do" tasks={columns.TODO} onDelete={handleDeleteTask} onCardClick={handleCardClick}/>
+          <KanbanColumn id="IN_PROGRESS" title="In Progress" tasks={columns.IN_PROGRESS} onDelete={handleDeleteTask} onCardClick={handleCardClick}/>
+          <KanbanColumn id="DONE" title="Done" tasks={columns.DONE} onDelete={handleDeleteTask} onCardClick={handleCardClick}/>
         </div>
         
         <DragOverlay dropAnimation={{
