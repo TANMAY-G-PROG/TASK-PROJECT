@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
+import ProjectPage from './pages/ProjectPage';
 
 function App() {
   return (
@@ -27,7 +28,13 @@ function App() {
               <ProtectedRoute>
                 <CoursePage />
               </ProtectedRoute>
-            } />
+            } 
+            />
+            <Route path="/projects/:id" element= {
+              <ProtectedRoute>
+                <ProjectPage />
+              </ProtectedRoute>} 
+            />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </main>

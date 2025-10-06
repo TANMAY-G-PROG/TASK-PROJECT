@@ -15,20 +15,59 @@ model User {
   name      String
   password  String
   courses   Course[] // A user can have many courses
+  projects  ProjectMember[]
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  // A project has many members (users) and many tasks
+  members     ProjectMember[]
+  tasks       Task[]
+}
+
+// NEW: The "join table" for the many-to-many relationship
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  role      String   @default("MEMBER") // e.g., "MEMBER", "ADMIN"
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+
+  @@unique([userId, projectId]) // A user can only join a project once
 }
 
 model Course {
   id           Int             @id @default(autoincrement())
-  courseCode   String // e.g., "CS201"
-  title        String // e.g., "Data Structures"
+  courseCode   String
+  title        String
   instructor   String?
   credits      Float?
+
+  courseType   CourseType @default(THEORY_ONLY)
+  cie1         Float?
+  cie2         Float?
+  cie3         Float?
+  aat          Float?
+  see          Float?
+  lab          Float?
+  
   user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
+  
+  // These are for the simple deadline/task tracker, not the final grade
   tasks        Task[]
   gradableItems GradableItem[]
   resources    Resource[]
   schedules    Schedule[]
+}
+
+enum CourseType {
+  THEORY_ONLY
+  THEORY_WITH_LAB
 }
 
 // Replaces the old "Task" model's direct link to User
@@ -38,8 +77,15 @@ model Task {
   description String?
   completed   Boolean  @default(false)
   dueDate     DateTime?
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId    Int
+  
+  // A task can belong to a personal course OR a collaborative project
+  course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int?
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int?
+  
+  // NEW: Add a status for the Kanban board
+  status      String   @default("TODO") // e.g., "TODO", "IN_PROGRESS", "DONE"
 }
 
 // For assignments, exams, quizzes, etc.
@@ -48,7 +94,7 @@ model GradableItem {
   title         String
   type          ItemType @default(ASSIGNMENT)
   dueDate       DateTime
-  weightage     Float // e.g., 0.30 for 30%
+  weightage     Float? // e.g., 0.30 for 30%
   gradeAchieved Float? // The score the student received
   course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId      Int

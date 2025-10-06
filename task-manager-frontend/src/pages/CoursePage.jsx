@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import apiClient from '../services/api';
 import DeadlinesTab from '../components/DeadlinesTab';
+import GradeReportTab from '../components/GradeReportTab';
 import TasksTab from '../components/TasksTab';
 import ResourcesTab from '../components/ResourcesTab';
 
@@ -11,7 +12,7 @@ const CoursePage = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('deadlines');
+  const [activeTab, setActiveTab] = useState('report');
   const { id } = useParams();
 
   const fetchCourse = async () => {
@@ -52,8 +53,11 @@ const CoursePage = () => {
       {/* Tab Navigation */}
       <div className="border-b border-slate-700 mb-6">
         <nav className="flex space-x-8">
+          <button onClick={() => setActiveTab('report')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'report' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+            Grade Report
+          </button>
           <button onClick={() => setActiveTab('deadlines')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'deadlines' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
-            Deadlines & Grades
+            Deadlines
           </button>
           <button onClick={() => setActiveTab('tasks')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'tasks' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
             Tasks
@@ -66,6 +70,7 @@ const CoursePage = () => {
 
       {/* Tab Content */}
       <div>
+        {activeTab === 'report' && <GradeReportTab course={course} onUpdate={fetchCourse} />}
         {activeTab === 'deadlines' && <DeadlinesTab items={course.gradableItems} courseId={course.id} onUpdate={fetchCourse} />}
         {activeTab === 'tasks' && <TasksTab initialTasks={course.tasks} courseId={course.id} onUpdate={fetchCourse} />}
         {activeTab === 'resources' && <ResourcesTab initialResources={course.resources} courseId={course.id} onUpdate={fetchCourse} />}

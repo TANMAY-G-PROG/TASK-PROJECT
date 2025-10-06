@@ -30,13 +30,18 @@ exports.createTaskForCourse = async (req, res) => {
 
 exports.updateTask = async (req, res) => {
     const { taskId } = req.params;
-    const { title, completed } = req.body;
+    const { title, completed, status } = req.body;
     
     try {
         const updatedTask = await prisma.task.update({
             where: { id: parseInt(taskId) },
-            data: { title, completed }
+            data: { title, completed, status }
         });
+
+        if (updatedTask.projectId) {
+            // req.io is available thanks to the middleware we added in index.js
+            req.io.to(`project-${updatedTask.projectId}`).emit('task_updated', updatedTask);
+        }
         res.json(updatedTask);
     } catch (error) {
         res.status(400).json({ error: 'Failed to update task.' });
@@ -53,5 +58,32 @@ exports.deleteTask = async (req, res) => {
         res.status(204).send();
     } catch (error) {
         res.status(400).json({ error: 'Failed to delete task.' });
+    }
+};
+
+exports.createTaskForProject = async (req, res) => {
+    const { projectId } = req.params;
+    const { title } = req.body;
+    const userId = req.user.userId;
+
+    try {
+        // Security Check: Verify the user is a member of the project
+        const membership = await prisma.projectMember.findFirst({
+            where: { projectId: parseInt(projectId), userId: userId }
+        });
+        if (!membership) {
+            return res.status(403).json({ error: 'You are not a member of this project.' });
+        }
+
+        const task = await prisma.task.create({
+            data: {
+                title,
+                projectId: parseInt(projectId),
+                status: 'TODO' // Default status
+            }
+        });
+        res.status(201).json(task);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to create task.' });
     }
 };

@@ -21,6 +21,7 @@ exports.createCourse = async (req, res) => {
     });
     res.status(201).json(course);
   } catch (error) {
+    console.error("CREATE COURSE ERROR:", error);
     res.status(400).json({ error: 'Failed to create course.' });
   }
 };
@@ -67,15 +68,29 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
-// @desc    Update a course
-// @route   PUT /api/courses/:id
 exports.updateCourse = async (req, res) => {
-    // Implementation is similar to deleteTask, ensuring user ownership
-    // ...
+    const { id } = req.params;
+    const { courseCode, title, instructor, courseType, cie1, cie2, cie3, aat, see, lab } = req.body;
+
+    try {
+        const result = await prisma.course.updateMany({
+            where: {
+                id: parseInt(id),
+                userId: req.user.userId, 
+            },
+            data: { courseCode, title, instructor, courseType, cie1, cie2, cie3, aat, see, lab }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({ error: 'Course not found or user not authorized.' });
+        }
+        const updatedCourse = await prisma.course.findUnique({ where: { id: parseInt(id) } });
+        res.json(updatedCourse);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update course.' });
+    }
 };
 
-// @desc    Delete a course
-// @route   DELETE /api/courses/:id
 exports.deleteCourse = async (req, res) => {
     const { id } = req.params;
     try {

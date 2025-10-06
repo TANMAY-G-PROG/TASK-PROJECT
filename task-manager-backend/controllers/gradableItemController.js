@@ -3,8 +3,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// @desc    Create a new gradable item for a course
-// @route   POST /api/courses/:courseId/gradable-items
 exports.createGradableItem = async (req, res) => {
   const { courseId } = req.params;
   const { title, type, dueDate, weightage } = req.body;
@@ -33,8 +31,6 @@ exports.createGradableItem = async (req, res) => {
   }
 };
 
-// @desc    Update a gradable item (e.g., to add a grade)
-// @route   PUT /api/courses/:courseId/gradable-items/:itemId
 exports.updateGradableItem = async (req, res) => {
     const { itemId } = req.params;
     const { gradeAchieved } = req.body; // Assume we are just updating the grade for now
