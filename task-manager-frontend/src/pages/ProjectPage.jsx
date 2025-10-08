@@ -77,14 +77,23 @@ const ProjectPage = () => {
       </div> */}
 
       <div className="border-b border-slate-700 mb-6">
-        <nav className="flex space-x-8">
-          <button onClick={() => setActiveTab('board')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'board' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+        <nav className="flex space-x-2">
+          <button 
+            onClick={() => setActiveTab('board')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'report' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Kanban Board
           </button>
-          <button onClick={() => setActiveTab('github')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'github' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('github')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'deadlines' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             GitHub
           </button>
-          <button onClick={() => setActiveTab('settings')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'settings' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('settings')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'tasks' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Members & Settings
           </button>
         </nav>

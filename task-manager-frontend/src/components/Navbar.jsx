@@ -60,7 +60,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-3">
           <Link to={user ? "/dashboard" : "/login"} className="text-xl font-bold text-white tracking-wider">
-            Academia<span className="text-indigo-400">OS</span>
+            Flow<span className="text-indigo-400">Board</span>
           </Link>
           <ul className="flex items-center space-x-4">
             {user ? (

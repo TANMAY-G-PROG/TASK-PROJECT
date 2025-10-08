@@ -52,17 +52,29 @@ const CoursePage = () => {
 
       {/* Tab Navigation */}
       <div className="border-b border-slate-700 mb-6">
-        <nav className="flex space-x-8">
-          <button onClick={() => setActiveTab('report')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'report' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+        <nav className="flex space-x-2">
+          <button 
+            onClick={() => setActiveTab('report')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'report' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Grade Report
           </button>
-          <button onClick={() => setActiveTab('deadlines')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'deadlines' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('deadlines')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'deadlines' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Deadlines
           </button>
-          <button onClick={() => setActiveTab('tasks')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'tasks' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('tasks')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'tasks' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Tasks
           </button>
-          <button onClick={() => setActiveTab('resources')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'resources' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
+          <button 
+            onClick={() => setActiveTab('resources')} 
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === 'resources' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-indigo-400/50 hover:text-white'}`}
+          >
             Resources
           </button>
         </nav>
