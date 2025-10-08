@@ -174,3 +174,77 @@ exports.addMemberToProject = async (req, res) => {
         res.status(500).json({ error: 'Failed to add member.' });
     }
 };
+
+exports.getRepoActivity = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    try {
+        // 1. Find the project and ensure the user is a member
+        const project = await prisma.project.findFirst({
+            where: {
+                id: parseInt(id),
+                members: { some: { userId: userId } }
+            }
+        });
+
+        // 2. Find the user's GitHub access token
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!project || !project.githubRepo || !user || !user.githubAccessToken) {
+            return res.status(404).json({ error: 'Project, linked repo, or GitHub token not found.' });
+        }
+
+        // 3. Call the GitHub API
+        const repoUrl = `https://api.github.com/repos/${project.githubRepo}/commits`;
+        const response = await fetch(repoUrl, {
+            headers: {
+                // Use the user's stored token for authentication
+                'Authorization': `Bearer ${user.githubAccessToken}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`GitHub API responded with status ${response.status}`);
+        }
+        
+        const commits = await response.json();
+        
+        // 4. Send the data back to our frontend
+        res.json(commits);
+
+    } catch (error) {
+        console.error("Failed to fetch repo activity:", error);
+        res.status(500).json({ error: 'Failed to fetch repository activity.' });
+    }
+};
+
+exports.updateProject = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const dataToUpdate = req.body; 
+    
+    try {
+        const membership = await prisma.projectMember.findFirst({
+            where: {
+                projectId: parseInt(id),
+                userId: userId,
+                role: 'ADMIN',
+            }
+        });
+
+        if (!membership) {
+            return res.status(403).json({ error: 'Forbidden: You must be an admin to update this project.' });
+        }
+
+        const updatedProject = await prisma.project.update({
+            where: { id: parseInt(id) },
+            data: dataToUpdate,
+        });
+
+        res.json(updatedProject);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update project.' });
+    }
+};

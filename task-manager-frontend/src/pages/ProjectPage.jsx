@@ -6,6 +6,7 @@ import apiClient from '../services/api';
 import io from 'socket.io-client';
 import KanbanBoardTab from '../components/KanbanBoardTab';
 import ProjectSettingsTab from '../components/ProjectSettingsTab';
+import GitActivityTab from '../components/GitActivityTab';
 
 const socket = io('http://localhost:5000');
 
@@ -80,6 +81,9 @@ const ProjectPage = () => {
           <button onClick={() => setActiveTab('board')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'board' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
             Kanban Board
           </button>
+          <button onClick={() => setActiveTab('github')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'github' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-white'}`}>
+            GitHub
+          </button>
           <button onClick={() => setActiveTab('settings')} className={`py-4 px-1 border-b-2 font-medium ${activeTab === 'settings' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'}`}>
             Members & Settings
           </button>
@@ -89,6 +93,7 @@ const ProjectPage = () => {
       {/* Tab Content */}
       <div>
         {activeTab === 'board' && <KanbanBoardTab initialTasks={project.tasks} projectId={project.id} onUpdate={fetchProject} />}
+        {activeTab === 'github' && <GitActivityTab project={project} />}
         {activeTab === 'settings' && <ProjectSettingsTab project={project} onUpdate={fetchProject} />}
       </div>
     </div>

@@ -42,3 +42,18 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'An unexpected error occurred.' });
   }
 };
+
+exports.getMe = async (req, res) => {
+    // The user ID is from our authenticateToken middleware
+    const userId = req.user.userId;
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            // Exclude the password from being sent back
+            select: { id: true, email: true, name: true, githubId: true }
+        });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch user data." });
+    }
+};

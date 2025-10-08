@@ -17,6 +17,8 @@ model User {
   courses   Course[] // A user can have many courses
   projects  ProjectMember[]
   comments  Comment[]
+  githubId          String?  @unique
+  githubAccessToken String?
 }
 
 model Project {
@@ -27,6 +29,7 @@ model Project {
   // A project has many members (users) and many tasks
   members     ProjectMember[]
   tasks       Task[]
+  githubRepo  String? // e.g., "username/repo-name"
 }
 
 // NEW: The "join table" for the many-to-many relationship

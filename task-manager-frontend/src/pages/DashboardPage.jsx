@@ -1,6 +1,7 @@
 // src/pages/DashboardPage.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import apiClient from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import AddCourseModal from '../components/AddCourseModal';
@@ -8,15 +9,18 @@ import CourseCard from '../components/CourseCard';
 import AddProjectModal from '../components/AddProjectModal';
 import ProjectCard from '../components/ProjectCard';
 
+
 const DashboardPage = () => {
   // STATE for both courses and projects
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [courses, setCourses] = useState([]);
   const [projects, setProjects] = useState([]);
 
   // SEPARATE state for each modal's visibility
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // UPDATED function to fetch both courses and projects
   const fetchData = async () => {
@@ -55,6 +59,17 @@ const DashboardPage = () => {
   // useEffect now calls the new fetchData function
   useEffect(() => {
     fetchData();
+
+    const githubStatus = searchParams.get('github');
+    if (githubStatus === 'success') {
+      alert('Successfully connected your GitHub account!');
+      // A more elegant solution would be a toast notification
+      refreshUser();
+    } else if (githubStatus === 'fail') {
+      alert('Failed to connect your GitHub account. Please try again.');
+    }
+    searchParams.delete('github');
+    setSearchParams(searchParams);
   }, []);
 
   return (

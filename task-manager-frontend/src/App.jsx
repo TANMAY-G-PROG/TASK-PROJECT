@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
 import ProjectPage from './pages/ProjectPage';
 import TaskDetailPage from './pages/TaskDetailPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
   return (
@@ -39,6 +40,11 @@ function App() {
             <Route path="/projects/:projectId/tasks/:taskId" element= {
               <ProtectedRoute>
                 <TaskDetailPage />
+              </ProtectedRoute>} 
+            />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>} 
             />
             <Route path="*" element={<Navigate to="/login" />} />

@@ -237,7 +237,7 @@ const KanbanBoardTab = ({ initialTasks, projectId, onUpdate }) => {
             value={newTaskTitle}
             onChange={(e) => setNewTaskTitle(e.target.value)}
             placeholder="Add a new task to the board..."
-            className="flex-grow px-4 py-3 bg-brand-dark border border-gray-600 rounded-md text-white"
+            className="flex-grow px-4 py-3 bg-slate-800 border border-gray-600 rounded-md text-white"
         />
         <button type="submit" className="px-5 py-3 bg-indigo-600 hover:bg-brand-accent-hover text-white font-semibold rounded-lg">
             Add Task

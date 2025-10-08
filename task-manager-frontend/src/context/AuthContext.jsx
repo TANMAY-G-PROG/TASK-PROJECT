@@ -63,6 +63,19 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  const refreshUser = async () => {
+    if (token) {
+        try {
+            const response = await apiClient.get('/auth/me');
+            const freshUser = response.data;
+            setUser(freshUser);
+            sessionStorage.setItem('user', JSON.stringify(freshUser));
+        } catch (error) {
+            console.error("Failed to refresh user data", error);
+        }
+    }
+  };
+
   useEffect(() => {
     // Read user data from sessionStorage
     const storedUser = sessionStorage.getItem('user');
@@ -100,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
-  const value = { user, token, login, logout };
+  const value = { user, token, login, logout, refreshUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

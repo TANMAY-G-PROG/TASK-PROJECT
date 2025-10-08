@@ -1,15 +1,15 @@
-// index.js - CORRECTED
-
 require('dotenv').config();
 const express = require('express'); 
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 
+const session = require('express-session');
+const passport = require('passport');
+require('./config/passport-setup');
+
 const app = express();
-
 const httpServer = http.createServer(app);
-
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:5173", // Your frontend URL
@@ -25,8 +25,17 @@ const resourceRoutes = require('./routes/resources');
 const projectRoutes = require('./routes/projects');
 
 // --- Middleware ---
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow frontend to access
+    credentials: true,
+}));
 app.use(express.json());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'a secret key',
+    resave: false,
+    saveUninitialized: false,
+}));
 
 // Middleware to make the `io` instance available in controllers
 app.use((req, res, next) => {
