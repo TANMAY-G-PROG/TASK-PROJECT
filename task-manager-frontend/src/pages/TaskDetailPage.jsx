@@ -121,7 +121,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../services/api';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_BASE_URL);
 
 const TaskDetailPage = () => {
   const { projectId, taskId } = useParams();

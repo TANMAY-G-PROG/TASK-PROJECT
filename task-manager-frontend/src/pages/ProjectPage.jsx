@@ -8,7 +8,7 @@ import KanbanBoardTab from '../components/KanbanBoardTab';
 import ProjectSettingsTab from '../components/ProjectSettingsTab';
 import GitActivityTab from '../components/GitActivityTab';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_BASE_URL);
 
 const ProjectPage = () => {
   const { id: projectId } = useParams();
