@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // Your backend URL
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`, // Your backend URL
 });
 
 // Use an interceptor to add the auth token to every request
