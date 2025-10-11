@@ -14,7 +14,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Your frontend URL
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -28,10 +28,11 @@ const resourceRoutes = require('./routes/resources');
 const projectRoutes = require('./routes/projects');
 
 // --- Middleware ---
-app.use(cors({
-    origin: 'http://localhost:5173', // Allow frontend to access
-    credentials: true,
-}));
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:5173", // Uses environment variable
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const pgPool = new pg.Pool({
