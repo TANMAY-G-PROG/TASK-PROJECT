@@ -34,6 +34,8 @@ const io = new Server(httpServer, {
   cors: corsOptions
 });
 
+app.set('trust proxy', 1);
+
 // --- Routes ---
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
@@ -60,15 +62,18 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'a secret key',
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === "production",
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7 
-    }
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // Middleware to make the `io` instance available in controllers
 app.use((req, res, next) => {

@@ -5,11 +5,12 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// This function now correctly receives our full user object from the database and saves its ID to the session.
+// This function saves the user's ID into the session cookie.
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
+// This function retrieves the full user from the database based on the ID in the cookie.
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: id } });
@@ -24,18 +25,22 @@ passport.use(
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: process.env.GITHUB_CALLBACK_URL || "http://localhost:5000/api/auth/github/callback",
-        passReqToCallback: true // <-- This is important, it gives us access to the 'req' object
+        passReqToCallback: true // This allows us to access 'req'
     },
-    // This function now contains all the logic for finding and updating the user.
+    // This is the main logic function that runs after a user authorizes on GitHub.
     async (req, accessToken, refreshToken, profile, done) => {
         try {
-            // Get the user ID we saved in the session before the redirect
+            // Get the user ID we saved in the session before the redirect.
             const localUserId = req.session.localUserId;
+
+            // --- THIS IS THE FIX ---
+            // If the session was lost for any reason, we must return an error.
+            // We cannot create a new user here because we don't have their email/password.
             if (!localUserId) {
                 return done(new Error("No local user session found."), null);
             }
 
-            // Find our user and update their record with the GitHub info
+            // Find the user in our database and update their record with the GitHub info.
             const updatedUser = await prisma.user.update({
                 where: { id: localUserId },
                 data: {
@@ -44,7 +49,7 @@ passport.use(
                 },
             });
             
-            // Return the full, updated user object from our database
+            // Return the full, updated user object. Passport will handle the rest.
             return done(null, updatedUser);
 
         } catch (error) {
