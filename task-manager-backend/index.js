@@ -14,7 +14,8 @@ const app = express();
 const httpServer = http.createServer(app);
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // e.g., https://flow-board-tawny.vercel.app
+  process.env.FRONTEND_URL,
+  `${process.env.FRONTEND_URL}/`,
   "http://localhost:5173" // For local development
 ];
 
