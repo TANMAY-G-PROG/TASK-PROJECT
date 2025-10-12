@@ -1,10 +1,8 @@
-// src/pages/SettingsPage.jsx
-
 // import React from 'react';
 // import { useAuth } from '../context/AuthContext';
 
 // const SettingsPage = () => {
-//   const { user } = useAuth();
+//   const { user, token } = useAuth(); 
 
 //   return (
 //     <div className="container mx-auto px-4 py-8 text-white">
@@ -16,15 +14,14 @@
 //           <p className="text-lg">Connect your GitHub Account</p>
           
 //           {user && user.githubId ? (
-//             // If user is already connected
 //             <div className="text-center">
 //               <p className="text-green-400 font-semibold">✅ Connected</p>
-//               <span className="text-sm text-gray-400">(ID: {user.githubId})</span>
 //             </div>
 //           ) : (
+           
 //             <a 
-//               href="http://localhost:5000/api/auth/github"
-//               className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg shadow-md transition duration-200"
+//               href={`http://localhost:5000/api/auth/github?token=${token}`}
+//               className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg shadow-md"
 //             >
 //               Connect to GitHub
 //             </a>
@@ -43,7 +40,11 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const SettingsPage = () => {
-  const { user, token } = useAuth(); // <-- Get the token from the context
+  const { user, token } = useAuth();
+
+  // --- THIS IS THE FIX ---
+  // Construct the full, live backend URL for the GitHub link
+  const githubAuthUrl = `${import.meta.env.VITE_API_BASE_URL}/api/auth/github?token=${token}`;
 
   return (
     <div className="container mx-auto px-4 py-8 text-white">
@@ -59,9 +60,9 @@ const SettingsPage = () => {
               <p className="text-green-400 font-semibold">✅ Connected</p>
             </div>
           ) : (
-            // The href now includes the token as a query parameter
+            // The href now uses the dynamic URL we constructed
             <a 
-              href={`http://localhost:5000/api/auth/github?token=${token}`}
+              href={githubAuthUrl}
               className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg shadow-md"
             >
               Connect to GitHub
