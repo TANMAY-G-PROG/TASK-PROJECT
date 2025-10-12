@@ -19,22 +19,9 @@ model User {
   comments  Comment[]
   githubId          String?  @unique
   githubAccessToken String?
-  sessions  Session[]  // Add this line
 }
 
-// ADD THIS MODEL for session management
-model Session {
-  id           Int      @id @default(autoincrement())
-  sessionToken String   @unique
-  userId       Int
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([userId])
-  @@index([sessionToken])
-}
+// REMOVED: Session model - we use connect-pg-simple instead
 
 model Project {
   id          Int      @id @default(autoincrement())

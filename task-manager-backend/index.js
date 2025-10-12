@@ -54,10 +54,12 @@ const pgPool = new pg.Pool({
   }
 });
 
+// FIX: Let connect-pg-simple create the table automatically
 app.use(session({
     store: new pgSession({
         pool: pgPool,                
-        tableName: 'user_sessions'  
+        tableName: 'user_sessions',  // This table will be auto-created
+        createTableIfMissing: true   // ADD THIS LINE - auto-creates the table
     }),
     secret: process.env.SESSION_SECRET || 'a secret key',
     resave: false,
@@ -103,5 +105,5 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-// 5. Start the server using the httpServer
+// Start the server using the httpServer
 httpServer.listen(PORT, () => console.log(`💻 Server with Sockets listening on port ${PORT}`));
