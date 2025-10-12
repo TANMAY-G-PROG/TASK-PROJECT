@@ -33,9 +33,9 @@ passport.use(
             // Get the user ID we saved in the session before the redirect.
             const localUserId = req.session.localUserId;
 
-            // --- THIS IS THE FIX ---
-            // If the session was lost for any reason, we must return an error.
-            // We cannot create a new user here because we don't have their email/password.
+            // --- THIS IS THE CRITICAL FIX ---
+            // If the session was lost for any reason (like the database connection failing),
+            // we must return an error. We cannot create a new user here.
             if (!localUserId) {
                 return done(new Error("No local user session found."), null);
             }
